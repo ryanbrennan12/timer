@@ -2,9 +2,102 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <title></title>
+    <title>Timer Component</title>
+    <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6.26.0/babel.js"></script>
+    <link href="css/bootstrap.min.css" rel="stylesheet" />
   </head>
   <body>
+      <div id="root"></div>
 
-  </body>
+      <script type="text/babel">
+
+class Timer extends React.Component {
+  constructor() {
+    super();
+    this.state = {
+      time: {},
+      seconds: 0,
+      minutes: 0
+
+    };
+    this.timer = 0;
+    this.startTimer = this.startTimer.bind(this);
+    this.stopTimer = this.stopTimer.bind(this);
+    this.initCountDown = this.initCountDown.bind(this);
+    this.handleChange = this.handleChange.bind(this);
+  }
+
+  secondsToTime(secs){
+    let hours = Math.floor(secs / (60 * 60));
+    let minDivide= secs % (60 * 60);
+    let minutes = Math.floor(minDivide / 60);
+    let secDivide= minDivide % 60;
+    let seconds = Math.ceil(secDivide);
+
+    let obj = {
+      "h": hours,
+      "m": minutes,
+      "s": seconds
+    };
+    return obj;
+  }
+
+  componentDidMount() {
+    let timeLeftVar = this.secondsToTime(this.state.seconds);
+    this.setState({ time: timeLeftVar });
+  }
+
+  handleChange(e) {
+    let change = {}
+    change[e.target.name] = e.target.value
+    this.setState(change)
+  }
+
+  startTimer() {
+    if (this.timer == 0 && this.state.seconds > 0) {
+      this.timer = setInterval(this.initCountDown, 1000);
+    }
+  }
+  stopTimer() {
+    clearInterval(this.startTimer);
+  }
+
+  initCountDown() {
+    let seconds = this.state.seconds - 1;
+    this.setState({
+      time: this.secondsToTime(seconds),
+      seconds: seconds,
+    });
+    if (seconds == 0) {
+      clearInterval(this.timer);
+    }
+  }
+
+  render() {
+    return(
+      <div>
+        <h3>Lil Timer</h3>
+        <button onClick={this.startTimer}>Start Countdown</button>
+        <input type="text" name="seconds" onChange={this.handleChange.bind(this)} value={this.state.seconds}/>
+        <div>
+        Hours: {this.state.time.h} Minutes: {this.state.time.m} Seconds: {this.state.time.s}
+        </div>
+        <button onClick={this.stopTimer}>Stop Countdown</button>
+        </div>
+      );
+    }
+  }
+  ReactDOM.render(<Timer />, document.getElementById('root'))
+</script>
+<script src="js/bootstrap.min.js"></script>
+</body>
 </html>
+
+
+
+
+
+
+
